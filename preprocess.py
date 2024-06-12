@@ -66,9 +66,9 @@ def tokenize_to_file(args, in_path, output_dir, line_fn, max_length, begin_idx, 
 
 
 def multi_file_process(args, num_process, in_path, out_path, line_fn, max_length):
-    output_linecnt = subprocess.check_output(["wc", "-l", in_path]).decode("utf-8")
+    output_linecnt = subprocess.check_output(['find', '/c', '/v', '""', in_path], shell=True).decode("utf-8")
     print("line cnt", output_linecnt)
-    all_linecnt = int(output_linecnt.split()[0])
+    all_linecnt = int(output_linecnt.split()[2])
     run_arguments = []
     for i in range(num_process):
         begin_idx = round(all_linecnt * i / num_process)
@@ -184,16 +184,13 @@ def write_query_rel(args, pid2offset, qid2offset_file, query_file, positive_id_f
 def preprocess(args):
     
     pid2offset = {}
-    if args.data_type == 0:
-        in_passage_path = os.path.join(
-            args.data_dir,
-            "msmarco-docs.tsv",
-        )
-    else:
-        in_passage_path = os.path.join(
-            args.data_dir,
-            "collection.tsv",
-        )
+    #if args.data_type == 0:
+    in_passage_path = './data/doc/dataset/wiki_musique_corpus_full.tsv'
+    #else:
+     #   in_passage_path = os.path.join(
+      #      args.data_dir,
+      #      "collection.tsv",
+      #  )
 
     out_passage_path = os.path.join(
         args.out_data_dir,
@@ -420,12 +417,11 @@ def get_arguments():
 
 def main():
     args = get_arguments()
-    if args.data_type == 0:
-        args.data_dir = "./data/doc/dataset"
-        args.out_data_dir = "./data/doc/preprocess"
-    else:
-        args.data_dir = "./data/passage/dataset"
-        args.out_data_dir = "./data/passage/preprocess"
+    # if args.data_type == 0:
+    args.data_dir = "./data/doc/dataset"
+    args.out_data_dir = "./data/doc/preprocess"
+    #    args.data_dir = "./data/passage/dataset"
+    #   args.out_data_dir = "./data/passage/preprocess"
 
     if not os.path.exists(args.out_data_dir):
         os.makedirs(args.out_data_dir)
